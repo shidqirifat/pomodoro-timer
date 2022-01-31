@@ -1,15 +1,21 @@
+/* eslint-disable no-restricted-globals */
 import React, { useState, useEffect } from 'react';
 
 export default function Main() {
   const [mode, setMode] = useState(0);
   const [startTimer, setStartTimer] = useState(false);
+  const [pauseTimer, setPauseTimer] = useState(false);
   const [second, setSecond] = useState(0);
-  const [minute, setMinute] = useState(0);
+  const [minute, setMinute] = useState(1);
   const [currentSecond, setCurrentSecond] = useState(0);
-  const [currentMinute, setCurrentMinute] = useState(1);
+  const [currentMinute, setCurrentMinute] = useState(0);
 
   useEffect(() => {
     setModeStart();
+
+    if (pauseTimer) {
+      console.log('pause');
+    }
 
     let startCountTimer;
     if (startTimer) {
@@ -25,31 +31,45 @@ export default function Main() {
         else if (currentSecond > 0) {
           setCurrentSecond(currentSecond - 1);
         }
-      }, 1000)
+      }, 1000);
     }
 
     return () => clearInterval(startCountTimer);
-  }, [second, minute, currentSecond, currentMinute, startTimer, mode]);
+
+  }, [second, minute, currentSecond, currentMinute, startTimer, mode, pauseTimer]);
 
   function activeMode(id) {
     setMode(id);
   }
 
   function newTime() {
-    if (currentSecond === 0 && currentMinute === 0) setModeStart();
     setStartTimer(isStart => !isStart);
+    if (currentSecond === 0 && currentMinute === 0) setModeStart();
+  }
+
+  function handlePause() {
+    setPauseTimer(prevPause => !prevPause);
+    setStartTimer(isStart => !isStart);
+    // console.log('pause', pauseTimer);
   }
 
   function setModeStart() {
     switch (mode) {
       case 0:
-        startPomodoro();
+        setMinute(1);
         break;
       case 1:
-        startShortBreak();
+        setMinute(2);
         break;
       default:
-        startLongBreak();
+        setMinute(3);
+    }
+
+    setSecond(0);
+    // if (!startTimer && currentSecond === 0 && currentMinute === 0) displayFirstTimer();
+    if (!startTimer && !pauseTimer) {
+      console.log('display first');
+      displayFirstTimer();
     }
   }
 
@@ -58,22 +78,9 @@ export default function Main() {
     setCurrentMinute(minute);
   }
 
-  function startPomodoro() {
-    setSecond(0);
-    setMinute(1);
-    if (!startTimer) displayFirstTimer();
-  }
-
-  function startShortBreak() {
-    setSecond(0);
-    setMinute(2);
-    if (!startTimer) displayFirstTimer();
-  }
-
-  function startLongBreak() {
-    setSecond(0);
-    setMinute(3);
-    if (!startTimer) displayFirstTimer();
+  function resetTimer() {
+    setCurrentSecond(0);
+    setCurrentMinute(0);
   }
 
   const timerLabel = ['Pomodoro', 'Short Break', 'Long Break'];
@@ -82,8 +89,14 @@ export default function Main() {
       className={mode === index ? 'active' : ''}
       key={index}
       onClick={() => {
+        let switchMode = true;
+
+        if (startTimer) switchMode = confirm('are u sure want to switch mode?');
+        if (switchMode === false) return;
+
+        setStartTimer(false);
         activeMode(index);
-        setModeStart();
+        resetTimer();
       }}
     >
       {label}
@@ -109,7 +122,7 @@ export default function Main() {
         </div>
         <button
           className='timer-start'
-          onClick={newTime}
+          onClick={!startTimer ? newTime : handlePause}
         >
           {!startTimer
             ? currentSecond !== 0
