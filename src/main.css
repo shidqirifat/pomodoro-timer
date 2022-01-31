@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap");
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+body {
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+  background: #4fbdba;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  background: #4fbdba;
+  color: white;
+  padding: 0 1rem;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+    rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+}
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.header-icon {
+  font-size: 1.8rem;
+}
+.timer-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 92%;
+  height: max-content;
+  margin: 30px auto 0;
+  text-align: center;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.281);
+}
+.timer-label {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 90%;
+  margin: 20px auto;
+}
+.timer-label h2 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  padding: 0.3rem;
+  border-radius: 4px;
+}
+.timer-label h2.active {
+  background: rgba(0, 0, 0, 0.205);
+  font-weight: 600;
+}
+.timer-counter {
+  height: 80px;
+  width: 90%;
+}
+.timer-counter span {
+  font-size: 5.6rem;
+  font-weight: 600;
+  color: white;
+  display: inline-block;
+}
+.timer-start {
+  outline: none;
+  border: none;
+  background: white;
+  padding: 0.7rem 2.5rem;
+  margin: 3rem auto 30px;
+  border-radius: 6px;
+  border-bottom: 5px solid rgba(219, 219, 219, 0.836);
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #4fbdba;
+  position: relative;
+}
+.timer-start:active {
+  border-bottom: 5px solid rgb(48, 180, 167);
+  top: 3px;
+}
