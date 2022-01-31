@@ -1,28 +1,32 @@
 /* eslint-disable no-restricted-globals */
 import React, { useState, useEffect } from 'react';
+import Task from './Task';
 
 export default function Main() {
   const [mode, setMode] = useState(0);
   const [startTimer, setStartTimer] = useState(false);
-  const [pauseTimer, setPauseTimer] = useState(false);
+  const [beforeStart, setBeforeStart] = useState(false);
   const [second, setSecond] = useState(0);
   const [minute, setMinute] = useState(1);
   const [currentSecond, setCurrentSecond] = useState(0);
   const [currentMinute, setCurrentMinute] = useState(0);
+  const [lapPomodoro, setLapPomodoro] = useState(0);
 
   useEffect(() => {
     setModeStart();
-
-    if (pauseTimer) {
-      console.log('pause');
-    }
-
     let startCountTimer;
+
     if (startTimer) {
       startCountTimer = setInterval(() => {
         if (currentSecond === 0 && currentMinute === 0) {
-          alert('Time is up!');
           setStartTimer(false);
+          setBeforeStart(false);
+
+          const notifTimeout = new Notification('Pomodoro time is pass?', {
+            body: 'Have a good day',
+          });
+          setTimeout(() => notifTimeout.close(), 10000);
+          finishMode();
         }
         else if (currentSecond === 0 && currentMinute > 0) {
           setCurrentSecond(5);
@@ -36,7 +40,7 @@ export default function Main() {
 
     return () => clearInterval(startCountTimer);
 
-  }, [second, minute, currentSecond, currentMinute, startTimer, mode, pauseTimer]);
+  }, [second, minute, currentSecond, currentMinute, startTimer, mode, beforeStart, lapPomodoro]);
 
   function activeMode(id) {
     setMode(id);
@@ -45,12 +49,24 @@ export default function Main() {
   function newTime() {
     setStartTimer(isStart => !isStart);
     if (currentSecond === 0 && currentMinute === 0) setModeStart();
+    if (!beforeStart) {
+      setBeforeStart(true);
+    }
   }
 
-  function handlePause() {
-    setPauseTimer(prevPause => !prevPause);
-    setStartTimer(isStart => !isStart);
-    // console.log('pause', pauseTimer);
+  function finishMode() {
+    switch (mode) {
+      case 0:
+        setMode(1);
+        setLapPomodoro(lapPomodoro + 1);
+        localStorage.setItem('Pomodoro', JSON.stringify(lapPomodoro + 1));
+        break;
+      case 1:
+        setMode(0);
+        break;
+      default:
+        setMode(0);
+    }
   }
 
   function setModeStart() {
@@ -66,21 +82,12 @@ export default function Main() {
     }
 
     setSecond(0);
-    // if (!startTimer && currentSecond === 0 && currentMinute === 0) displayFirstTimer();
-    if (!startTimer && !pauseTimer) {
-      console.log('display first');
-      displayFirstTimer();
-    }
+    if (!beforeStart) displayFirstTimer()
   }
 
   function displayFirstTimer() {
     setCurrentSecond(second);
     setCurrentMinute(minute);
-  }
-
-  function resetTimer() {
-    setCurrentSecond(0);
-    setCurrentMinute(0);
   }
 
   const timerLabel = ['Pomodoro', 'Short Break', 'Long Break'];
@@ -94,9 +101,9 @@ export default function Main() {
         if (startTimer) switchMode = confirm('are u sure want to switch mode?');
         if (switchMode === false) return;
 
+        setBeforeStart(false);
         setStartTimer(false);
         activeMode(index);
-        resetTimer();
       }}
     >
       {label}
@@ -111,18 +118,14 @@ export default function Main() {
         </div>
         <div className='timer-counter'>
           <span>
-            {!startTimer
-              ? minute < 10 ? `0${minute}` : minute
-              : currentMinute < 10 ? `0${currentMinute}` : currentMinute}
+            {currentMinute < 10 ? `0${currentMinute}` : currentMinute}
             :
-            {!startTimer
-              ? second < 10 ? `0${second}` : second
-              : currentSecond < 10 ? `0${currentSecond}` : currentSecond}
+            {currentSecond < 10 ? `0${currentSecond}` : currentSecond}
           </span>
         </div>
         <button
           className='timer-start'
-          onClick={!startTimer ? newTime : handlePause}
+          onClick={newTime}
         >
           {!startTimer
             ? currentSecond !== 0
@@ -132,6 +135,7 @@ export default function Main() {
           }
         </button>
       </div>
+      <Task lap={lapPomodoro} />
     </main>
   )
 };

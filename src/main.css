@@ -24,6 +24,8 @@ header {
 .header-title {
   font-size: 1.5rem;
   font-weight: 600;
+  display: flex;
+  gap: 10px;
 }
 .header-icon {
   font-size: 1.8rem;
@@ -58,11 +60,10 @@ header {
   font-weight: 600;
 }
 .timer-counter {
-  height: 80px;
   width: 90%;
 }
 .timer-counter span {
-  font-size: 5.6rem;
+  font-size: 6.6rem;
   font-weight: 600;
   color: white;
   display: inline-block;
@@ -72,7 +73,7 @@ header {
   border: none;
   background: white;
   padding: 0.7rem 2.5rem;
-  margin: 3rem auto 30px;
+  margin: 20px auto 30px;
   border-radius: 6px;
   border-bottom: 5px solid rgba(219, 219, 219, 0.836);
   font-size: 1.3rem;
@@ -84,4 +85,74 @@ header {
 .timer-start:active {
   border-bottom: 5px solid rgb(48, 180, 167);
   top: 3px;
+}
+.task-container {
+  margin-top: 30px;
+  width: 92%;
+  margin: 0 auto;
+}
+.task-container .lap-pomodoro {
+  font-size: 1.2rem;
+  font-weight: 400;
+  text-align: center;
+  color: rgb(250, 250, 250);
+  margin: 30px auto;
+}
+.task-container form {
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.task-container .new-task,
+.task-container .submit-task {
+  padding: 0.8rem;
+  outline: none;
+  width: 100%;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  color: rgb(218, 218, 218);
+}
+.task-container .new-task {
+  background: #e7e7e7;
+  border: 1px solid #35ada9;
+  color: rgb(0, 0, 0);
+}
+.task-container .submit-task {
+  border: none;
+  background: #2daca7;
+  font-weight: 600;
+}
+.task-todo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.task-todo .task-item {
+  padding: 0.8rem;
+  color: black;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 3px;
+  background: #ffffff;
+  border-left: 7px solid #2fa7a3;
+  position: relative;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  padding-left: 45px;
+}
+.check-task {
+  position: absolute;
+  left: 15px;
+}
+.delete-task {
+  position: absolute;
+  right: 15px;
+  color: #c4c4c4;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.1rem;
 }
