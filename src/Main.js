@@ -6,11 +6,12 @@ export default function Main() {
   const [mode, setMode] = useState(0);
   const [startTimer, setStartTimer] = useState(false);
   const [beforeStart, setBeforeStart] = useState(false);
+  const [runningTimer, setRunningTimer] = useState(false);
   const [second, setSecond] = useState(0);
   const [minute, setMinute] = useState(1);
   const [currentSecond, setCurrentSecond] = useState(0);
   const [currentMinute, setCurrentMinute] = useState(0);
-  const [lapPomodoro, setLapPomodoro] = useState(0);
+  const [lapPomodoro, setLapPomodoro] = useState(1);
 
   useEffect(() => {
     setModeStart();
@@ -25,11 +26,12 @@ export default function Main() {
           const notifTimeout = new Notification('Pomodoro time is pass?', {
             body: 'Have a good day',
           });
+          setRunningTimer(false);
           setTimeout(() => notifTimeout.close(), 10000);
           finishMode();
         }
         else if (currentSecond === 0 && currentMinute > 0) {
-          setCurrentSecond(5);
+          setCurrentSecond(59);
           setCurrentMinute(currentMinute - 1);
         }
         else if (currentSecond > 0) {
@@ -48,6 +50,7 @@ export default function Main() {
 
   function newTime() {
     setStartTimer(isStart => !isStart);
+    setRunningTimer(true);
     if (currentSecond === 0 && currentMinute === 0) setModeStart();
     if (!beforeStart) {
       setBeforeStart(true);
@@ -70,15 +73,16 @@ export default function Main() {
   }
 
   function setModeStart() {
+    const getTimeSetting = JSON.parse(localStorage.getItem('time'));
     switch (mode) {
       case 0:
-        setMinute(1);
+        setMinute(getTimeSetting.pomodoro);
         break;
       case 1:
-        setMinute(2);
+        setMinute(getTimeSetting.shortBreak);
         break;
       default:
-        setMinute(3);
+        setMinute(getTimeSetting.longBreak);
     }
 
     setSecond(0);
@@ -98,11 +102,12 @@ export default function Main() {
       onClick={() => {
         let switchMode = true;
 
-        if (startTimer) switchMode = confirm('are u sure want to switch mode?');
+        if (runningTimer) switchMode = confirm('are u sure want to switch mode?');
         if (switchMode === false) return;
 
         setBeforeStart(false);
         setStartTimer(false);
+        setRunningTimer(false);
         activeMode(index);
       }}
     >
@@ -135,7 +140,7 @@ export default function Main() {
           }
         </button>
       </div>
-      <Task lap={lapPomodoro} />
+      <Task lap={lapPomodoro} mode={mode} />
     </main>
   )
 };

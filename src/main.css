@@ -30,6 +30,88 @@ header {
 .header-icon {
   font-size: 1.8rem;
 }
+.time-setting-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  width: 92%;
+  max-width: 500px;
+  background: white;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  animation: time-setting 0.2s;
+}
+@keyframes time-setting {
+  from {
+    opacity: 0;
+    top: 60%;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.shadow-pop-up {
+  position: absolute;
+  inset: 0;
+  background: rgba(32, 32, 32, 0.685);
+  z-index: 2;
+}
+.close-setting-icon {
+  position: absolute;
+  color: rgb(173, 173, 173);
+  font-size: 1.6rem;
+  top: 32px;
+  right: 32px;
+}
+.title-time-setting {
+  color: black;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 30px;
+}
+.time-setting-container form {
+  display: flex;
+  flex-direction: column;
+}
+.time-setting-container form label {
+  color: rgb(63, 63, 63);
+  margin-bottom: 5px;
+}
+.time-setting-container form input {
+  margin-bottom: 30px;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  border: none;
+  background: #eeeeee;
+  font-family: "Inter", sans-serif;
+  border-radius: 4px;
+}
+.time-setting-container form input:focus {
+  outline: 2px solid #35ada9;
+}
+.time-setting-container .submit-time-setting {
+  padding: 1rem;
+  background: #4fbdba;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 1px solid #2da09c;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+.time-setting-container .reset-setting {
+  color: rgb(107, 107, 107);
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 20px;
+}
+
 .timer-container {
   display: flex;
   flex-direction: column;
@@ -91,12 +173,19 @@ header {
   width: 92%;
   margin: 0 auto;
 }
-.task-container .lap-pomodoro {
-  font-size: 1.2rem;
+.task-container .lap-pomodoro,
+.task-container .info-mode {
   font-weight: 400;
   text-align: center;
-  color: rgb(250, 250, 250);
-  margin: 30px auto;
+}
+.task-container .lap-pomodoro {
+  font-size: 1rem;
+  color: rgb(235, 233, 233);
+  margin: 30px auto 3px;
+}
+.task-container .info-mode {
+  font-size: 1.13rem;
+  color: rgb(255, 255, 255);
 }
 .task-container form {
   width: 100%;
@@ -121,14 +210,18 @@ header {
 }
 .task-container .submit-task {
   border: none;
-  background: #2daca7;
+  background: #3d3d3d2a;
   font-weight: 600;
+  border: 2px dashed #cccccc;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
 }
 .task-todo {
   display: flex;
   flex-direction: column;
   gap: 5px;
-  margin-bottom: 10px;
+  margin: 30px auto 10px;
 }
 .task-todo .task-item {
   padding: 0.8rem;

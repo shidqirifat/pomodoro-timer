@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { faTimes, faCheckDouble, faCheck, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faCheck, faClock, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Task(props) {
@@ -24,7 +24,7 @@ export default function Task(props) {
     const { name, value } = e.target;
     setNewTask(prevTask => ({
       ...prevTask,
-      id: tasks.length + 1,
+      id: new Date().valueOf(),
       [name]: value
     }));
   }
@@ -61,7 +61,19 @@ export default function Task(props) {
     });
   }
 
-  const LapPomodoro = <h4 className='lap-pomodoro'>#{getLap > 0 ? getLap : props.lap}</h4>;
+  const LapPomodoro = (
+    <>
+      <h4 className='lap-pomodoro'>#{getLap > 0 ? getLap : props.lap}</h4>
+      <h4
+        className='info-mode'
+      >
+        {tasks.filter(task => !task.value).length > 0
+          ? tasks.filter(task => !task.value)[0].name
+          : props.mode === 0 ? "Time to Focus!" : "Let' take some break"
+        }
+      </h4>
+    </>
+  );
   const TaskItems = tasks.map((task) => (
     <h3
       key={task.id}
@@ -96,7 +108,11 @@ export default function Task(props) {
           placeholder='New Task'
           onChange={handleNewTask}
         />
-        <button className='submit-task'>Add Task</button>
+        <button className='submit-task'>
+          <FontAwesomeIcon
+            icon={faPlusCircle}
+          />
+          Add Task</button>
       </form>
     </div>
   )
