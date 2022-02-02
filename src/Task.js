@@ -1,5 +1,6 @@
+/* eslint-disable no-restricted-globals */
 import React, { useEffect, useState } from 'react';
-import { faTimes, faCheck, faClock, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faClock, faPlusCircle, faCheckCircle, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Task(props) {
@@ -63,6 +64,24 @@ export default function Task(props) {
     });
   }
 
+  function clearFinishedTasks() {
+    setTasks(tasks => tasks.filter(task => !task.value));
+    displayTaskMenu();
+  }
+
+  function clearAllTasks() {
+    const confirmation = confirm('Are You sure want to delete all tasks list');
+
+    if (!confirmation) return;
+
+    setTasks([]);
+    displayTaskMenu();
+  }
+
+  function displayTaskMenu() {
+    document.querySelector('.task-menu-container').classList.toggle('active');
+  }
+
   const LapPomodoro = (
     <>
       <h4 className='lap-pomodoro'>#{getLap > 0 ? getLap : props.lap}</h4>
@@ -79,12 +98,12 @@ export default function Task(props) {
   const TaskItems = tasks.map((task) => (
     <h3
       key={task.id}
-      className='task-item'
+      className={task.value ? 'task-item checked' : 'task-item'}
     >
       <FontAwesomeIcon
         onClick={() => checkTask(task.id)}
-        className='check-task'
-        icon={task.value ? faCheck : faClock}
+        className={task.value ? 'check-task checked' : 'check-task'}
+        icon={faCheckCircle}
       />
       {task.name}
       <FontAwesomeIcon
@@ -98,11 +117,26 @@ export default function Task(props) {
   return (
     <div className='task-container'>
       {(props.lap > 0 || getLap > 0) && LapPomodoro}
+      <h3
+        className='task-title'
+      >
+        Todo
+        <FontAwesomeIcon
+          className='task-menu-icon'
+          onClick={displayTaskMenu}
+          icon={faEllipsisV}
+        />
+        <div className='task-menu-container'>
+          <h4 onClick={clearFinishedTasks}>Clear finished tasks</h4>
+          <h4 onClick={clearAllTasks}>Clear all tasks</h4>
+        </div>
+      </h3>
       <div className='task-todo'>
         {TaskItems}
       </div>
       <form onSubmit={submitNewTask}>
         <input
+          id='new-task'
           type='text'
           className='new-task'
           name='name'

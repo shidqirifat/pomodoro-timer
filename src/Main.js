@@ -1,5 +1,7 @@
 /* eslint-disable no-restricted-globals */
 import React, { useState, useEffect } from 'react';
+import { faForward } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Task from './Task';
 
 export default function Main(props) {
@@ -47,6 +49,19 @@ export default function Main(props) {
 
   window.onload = () => {
     localStorage.setItem('runningTimer', JSON.stringify(false));
+    resetLapChangeDay();
+  }
+
+  function resetLapChangeDay() {
+    const getDay = Number(localStorage.getItem('dateDay'));
+    const setToday = new Date().getDate();
+    if (!getDay) localStorage.setItem('dateDay', setToday);
+    else if (getDay !== setToday) {
+      console.log(getDay, setToday);
+      console.log('first');
+      localStorage.setItem('dateDay', setToday);
+      localStorage.setItem('Pomodoro', 1);
+    }
   }
 
   function activeMode(id) {
@@ -78,7 +93,7 @@ export default function Main(props) {
     switch (mode) {
       case 0:
         setLapPomodoro(lapPomodoro + 1);
-        localStorage.setItem('Pomodoro', JSON.stringify(lapPomodoro + 1));
+        localStorage.setItem('Pomodoro', lapPomodoro + 1);
         setMode(1);
         break;
       case 1:
@@ -112,25 +127,28 @@ export default function Main(props) {
     setCurrentMinute(minute);
   }
 
+  function handleSkipTimer(index, skipButton = false) {
+    let switchMode = true;
+
+    if (runningTimer) switchMode = confirm('are u sure want to switch mode?');
+    if (switchMode === false) return;
+
+    if (runningTimer && mode === 0) finishMode();
+
+    setBeforeStart(false);
+    setStartTimer(false);
+    setRunningTimer(false);
+    localStorage.setItem('runningTimer', JSON.stringify(false));
+    if (!skipButton) activeMode(index);
+    else activeMode(index === 0 ? 1 : 0);
+  }
+
   const timerLabel = ['Pomodoro', 'Short Break', 'Long Break'];
   const labelContent = timerLabel.map((label, index) => (
     <h2
       className={mode === index ? 'active' : ''}
       key={index}
-      onClick={() => {
-        let switchMode = true;
-
-        if (runningTimer) switchMode = confirm('are u sure want to switch mode?');
-        if (switchMode === false) return;
-
-        if (runningTimer && mode === 0) finishMode();
-
-        setBeforeStart(false);
-        setStartTimer(false);
-        setRunningTimer(false);
-        localStorage.setItem('runningTimer', JSON.stringify(false));
-        activeMode(index);
-      }}
+      onClick={() => handleSkipTimer(index)}
     >
       {label}
     </h2 >
@@ -164,18 +182,25 @@ export default function Main(props) {
             {currentSecond < 10 ? `0${currentSecond}` : currentSecond}
           </span>
         </div>
-        <button
-          className='timer-start'
-          onClick={newTime}
-          style={stylesStart}
-        >
-          {!startTimer
-            ? currentSecond !== 0
-              ? 'Resume'
-              : 'Start'
-            : 'Pause'
-          }
-        </button>
+        <div className='button-timer'>
+          <button
+            className='timer-start'
+            onClick={newTime}
+            style={stylesStart}
+          >
+            {!startTimer
+              ? runningTimer
+                ? 'Resume'
+                : 'Start'
+              : 'Pause'
+            }
+          </button>
+          <FontAwesomeIcon
+            onClick={() => handleSkipTimer(mode, true)}
+            className={runningTimer && !startTimer ? 'skip-timer-button active' : 'skip-timer-button'}
+            icon={faForward}
+          />
+        </div>
       </div>
       <Task lap={lapPomodoro} mode={mode} />
     </main>
