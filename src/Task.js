@@ -53,6 +53,8 @@ export default function Task(props) {
 
   function submitNewTask(e) {
     e.preventDefault();
+    if (newTask.name === '') return;
+
     setTasks(prevTask => [...prevTask, newTask]);
     setNewTask({
       id: null,
@@ -107,6 +109,7 @@ export default function Task(props) {
           value={newTask.name}
           placeholder='New Task'
           onChange={handleNewTask}
+          autoComplete='new-task'
         />
         <button className='submit-task'>
           <FontAwesomeIcon

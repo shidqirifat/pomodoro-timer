@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { faHourglassStart, faLeaf, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Main from './Main';
 
 export default function Header() {
   const [timeSet, setTimeSet] = useState({
@@ -10,18 +11,30 @@ export default function Header() {
   });
   const [displaySetting, setDisplaySetting] = useState(false);
   const [resetSetting, setResetSetting] = useState(false);
+  const [resfreshTimer, setResfreshTimer] = useState(false);
+  const [displayTimer, setDisplayTimer] = useState(false);
+  const [backgroundMode, setBackgroundMode] = useState('pomodoro');
 
   useEffect(() => {
-    if (!localStorage.getItem('time')) updateToLocalStorage();
-    else updateFromLocalStorage();
+    const getBackgroundMode = JSON.parse(localStorage.getItem('backgroundMode'));
+    if (!getBackgroundMode || getBackgroundMode !== backgroundMode) {
+      localStorage.setItem('backgroundMode', JSON.stringify(backgroundMode));
+    }
 
-    if (resetSetting) {
-      console.log('first');
+    if (!localStorage.getItem('time')) {
+      updateToLocalStorage();
+      setDisplayTimer(true);
+    }
+    else {
+      updateFromLocalStorage();
+      setDisplayTimer(true);
+    }
+
+    if (resetSetting || resfreshTimer) {
       updateToLocalStorage();
       setResetSetting(false);
-      window.location.reload();
     }
-  }, [resetSetting]);
+  }, [resetSetting, resfreshTimer, backgroundMode]);
 
   function handleDisplaySetting() {
     setDisplaySetting(isDisplay => !isDisplay);
@@ -46,19 +59,36 @@ export default function Header() {
     setTimeSet(previousTime);
   }
 
-  console.log(timeSet);
+  function isTimerRunning() {
+    const runningTimer = JSON.parse(localStorage.getItem('runningTimer'));
+    if (runningTimer) {
+      alert('Timer is running now, You are can not change timer setting before the timer is finish.');
+      updateFromLocalStorage();
+
+      return true;
+    }
+    return false;
+  }
 
   function handleSaveTime(e) {
+    e.preventDefault();
+    if (isTimerRunning()) return;
+
     updateToLocalStorage();
+    setResfreshTimer(true);
+    setDisplaySetting(isDisplay => !isDisplay);
   }
 
   function handleFactoryReset() {
+    isTimerRunning();
     setTimeSet({
       pomodoro: 25,
       shortBreak: 5,
       longBreak: 15
     });
     setResetSetting(true);
+    setResfreshTimer(true);
+    setDisplaySetting(isDisplay => !isDisplay);
   }
 
   const TimeSettingInput = (
@@ -82,16 +112,33 @@ export default function Header() {
         <h4 onClick={handleFactoryReset} className='reset-setting'>Reset setting</h4>
       </div>
     </>
-  )
+  );
+
+  const styles = {
+    backgroundColor: backgroundMode === 'pomodoro'
+      ? '#FF6363'
+      : backgroundMode === 'shortBreak'
+        ? '#4fbdba'
+        : '#1572A1',
+  }
 
   return (
-    <header>
-      <h1 className='header-title'>
-        <FontAwesomeIcon className='header-icon' icon={faLeaf} />
-        Pomodoro
-      </h1>
-      <FontAwesomeIcon onClick={handleDisplaySetting} className='header-icon' icon={faHourglassStart} />
-      {displaySetting && TimeSettingInput}
-    </header>
+    <>
+      <header style={styles}>
+        <h1 className='header-title'>
+          <FontAwesomeIcon className='header-icon' icon={faLeaf} />
+          Pomodoro
+        </h1>
+        <FontAwesomeIcon onClick={handleDisplaySetting} className='header-icon' icon={faHourglassStart} />
+        {displaySetting && TimeSettingInput}
+      </header>
+      {displayTimer &&
+        <Main
+          resfreshTimer={resfreshTimer}
+          setResfreshTimer={setResfreshTimer}
+          backgroundMode={backgroundMode}
+          setBackgroundMode={setBackgroundMode}
+        />}
+    </>
   );
 }

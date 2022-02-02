@@ -8,7 +8,6 @@
 body {
   min-height: 100vh;
   font-family: "Inter", sans-serif;
-  background: #4fbdba;
 }
 header {
   display: flex;
@@ -20,6 +19,9 @@ header {
   padding: 0 1rem;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
     rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+  transition: background-color 0.5s linear;
+  position: sticky;
+  z-index: 2;
 }
 .header-title {
   font-size: 1.5rem;
@@ -35,7 +37,7 @@ header {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 3;
+  z-index: 4;
   width: 92%;
   max-width: 500px;
   background: white;
@@ -55,10 +57,10 @@ header {
   }
 }
 .shadow-pop-up {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: rgba(32, 32, 32, 0.685);
-  z-index: 2;
+  z-index: 3;
 }
 .close-setting-icon {
   position: absolute;
@@ -92,17 +94,21 @@ header {
   border-radius: 4px;
 }
 .time-setting-container form input:focus {
-  outline: 2px solid #35ada9;
+  outline: 2px solid #5c5c5c;
 }
 .time-setting-container .submit-time-setting {
   padding: 1rem;
-  background: #4fbdba;
+  background: #313131;
   color: white;
   font-size: 1rem;
   font-weight: 600;
-  border: 1px solid #2da09c;
+  border: 1px solid #000000;
   border-radius: 4px;
   letter-spacing: 0.5px;
+}
+.time-setting-container .submit-time-setting:focus,
+.time-setting-container .submit-time-setting:active {
+  outline: 4px solid #686868;
 }
 .time-setting-container .reset-setting {
   color: rgb(107, 107, 107);
@@ -112,6 +118,12 @@ header {
   margin-top: 20px;
 }
 
+main {
+  padding-top: 30px;
+  height: calc(100vh - 60px);
+  transition: background-color 0.5s linear;
+}
+
 .timer-container {
   display: flex;
   flex-direction: column;
@@ -119,7 +131,7 @@ header {
   align-items: center;
   width: 92%;
   height: max-content;
-  margin: 30px auto 0;
+  margin: 0 auto;
   text-align: center;
   border-radius: 5px;
   background: rgba(255, 255, 255, 0.281);
@@ -157,12 +169,15 @@ header {
   padding: 0.7rem 2.5rem;
   margin: 20px auto 30px;
   border-radius: 6px;
-  border-bottom: 5px solid rgba(219, 219, 219, 0.836);
+  border-bottom: 5px solid rgba(199, 199, 199, 0.836);
   font-size: 1.3rem;
   font-weight: 600;
   text-transform: uppercase;
-  color: #4fbdba;
   position: relative;
+  transition: color 0.5s linear;
+}
+.timer-start:focus {
+  outline: 2px solid rgb(75, 75, 75);
 }
 .timer-start:active {
   border-bottom: 5px solid rgb(48, 180, 167);
@@ -205,8 +220,11 @@ header {
 }
 .task-container .new-task {
   background: #e7e7e7;
-  border: 1px solid #35ada9;
+  border: none;
   color: rgb(0, 0, 0);
+}
+.task-container .new-task:focus {
+  outline: 2px solid #3b3b3b;
 }
 .task-container .submit-task {
   border: none;
@@ -216,6 +234,9 @@ header {
   display: flex;
   justify-content: center;
   gap: 6px;
+}
+.task-container .submit-task:focus {
+  outline: 2px solid rgb(255, 255, 255);
 }
 .task-todo {
   display: flex;

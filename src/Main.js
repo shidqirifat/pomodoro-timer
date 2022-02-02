@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Task from './Task';
 
-export default function Main() {
+export default function Main(props) {
   const [mode, setMode] = useState(0);
   const [startTimer, setStartTimer] = useState(false);
   const [beforeStart, setBeforeStart] = useState(false);
@@ -11,7 +11,7 @@ export default function Main() {
   const [minute, setMinute] = useState(1);
   const [currentSecond, setCurrentSecond] = useState(0);
   const [currentMinute, setCurrentMinute] = useState(0);
-  const [lapPomodoro, setLapPomodoro] = useState(1);
+  const [lapPomodoro, setLapPomodoro] = useState(JSON.parse(localStorage.getItem('Pomodoro')) || 1);
 
   useEffect(() => {
     setModeStart();
@@ -19,7 +19,7 @@ export default function Main() {
 
     if (startTimer) {
       startCountTimer = setInterval(() => {
-        if (currentSecond === 0 && currentMinute === 0) {
+        if ((currentSecond === 0 && currentMinute === 0)) {
           setStartTimer(false);
           setBeforeStart(false);
 
@@ -27,11 +27,12 @@ export default function Main() {
             body: 'Have a good day',
           });
           setRunningTimer(false);
+          localStorage.setItem('runningTimer', JSON.stringify(false));
           setTimeout(() => notifTimeout.close(), 10000);
           finishMode();
         }
         else if (currentSecond === 0 && currentMinute > 0) {
-          setCurrentSecond(59);
+          setCurrentSecond(5);
           setCurrentMinute(currentMinute - 1);
         }
         else if (currentSecond > 0) {
@@ -42,15 +43,31 @@ export default function Main() {
 
     return () => clearInterval(startCountTimer);
 
-  }, [second, minute, currentSecond, currentMinute, startTimer, mode, beforeStart, lapPomodoro]);
+  }, [second, minute, currentSecond, currentMinute, startTimer, mode, beforeStart, lapPomodoro, props.resfreshTimer, runningTimer]);
+
+  window.onload = () => {
+    localStorage.setItem('runningTimer', JSON.stringify(false));
+  }
 
   function activeMode(id) {
     setMode(id);
+
+    switch (id) {
+      case 0:
+        props.setBackgroundMode('pomodoro');
+        break;
+      case 1:
+        props.setBackgroundMode('shortBreak');
+        break;
+      default:
+        props.setBackgroundMode('longBreak');
+    }
   }
 
   function newTime() {
     setStartTimer(isStart => !isStart);
     setRunningTimer(true);
+    localStorage.setItem('runningTimer', JSON.stringify(true));
     if (currentSecond === 0 && currentMinute === 0) setModeStart();
     if (!beforeStart) {
       setBeforeStart(true);
@@ -60,9 +77,9 @@ export default function Main() {
   function finishMode() {
     switch (mode) {
       case 0:
-        setMode(1);
         setLapPomodoro(lapPomodoro + 1);
         localStorage.setItem('Pomodoro', JSON.stringify(lapPomodoro + 1));
+        setMode(1);
         break;
       case 1:
         setMode(0);
@@ -86,7 +103,8 @@ export default function Main() {
     }
 
     setSecond(0);
-    if (!beforeStart) displayFirstTimer()
+    if (!beforeStart) displayFirstTimer();
+    props.setResfreshTimer(false);
   }
 
   function displayFirstTimer() {
@@ -105,18 +123,36 @@ export default function Main() {
         if (runningTimer) switchMode = confirm('are u sure want to switch mode?');
         if (switchMode === false) return;
 
+        if (runningTimer && mode === 0) finishMode();
+
         setBeforeStart(false);
         setStartTimer(false);
         setRunningTimer(false);
+        localStorage.setItem('runningTimer', JSON.stringify(false));
         activeMode(index);
       }}
     >
       {label}
-    </h2>
+    </h2 >
   ));
 
+  const stylesMain = {
+    backgroundColor: props.backgroundMode === 'pomodoro'
+      ? '#FF6363'
+      : props.backgroundMode === 'shortBreak'
+        ? '#4fbdba'
+        : '#1572A1',
+  }
+  const stylesStart = {
+    color: props.backgroundMode === 'pomodoro'
+      ? '#FF6363'
+      : props.backgroundMode === 'shortBreak'
+        ? '#4fbdba'
+        : '#1572A1',
+  }
+
   return (
-    <main>
+    <main style={stylesMain}>
       <div className='timer-container'>
         <div className='timer-label'>
           {labelContent}
@@ -131,6 +167,7 @@ export default function Main() {
         <button
           className='timer-start'
           onClick={newTime}
+          style={stylesStart}
         >
           {!startTimer
             ? currentSecond !== 0
