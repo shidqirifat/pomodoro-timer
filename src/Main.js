@@ -32,7 +32,7 @@ export default function Main(props) {
           finishMode();
         }
         else if (currentSecond === 0 && currentMinute > 0) {
-          setCurrentSecond(5);
+          setCurrentSecond(59);
           setCurrentMinute(currentMinute - 1);
         }
         else if (currentSecond > 0) {
