@@ -2,6 +2,7 @@
   "files": {
     "main.css": "/pomodoro-timer/static/css/main.b6ab8e14.css",
     "main.js": "/pomodoro-timer/static/js/main.bdd8a98d.js",
+    "service-worker.js": "/pomodoro-timer/service-worker.js",
     "index.html": "/pomodoro-timer/index.html",
     "main.b6ab8e14.css.map": "/pomodoro-timer/static/css/main.b6ab8e14.css.map",
     "main.bdd8a98d.js.map": "/pomodoro-timer/static/js/main.bdd8a98d.js.map"
