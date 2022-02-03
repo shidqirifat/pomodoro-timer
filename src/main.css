@@ -30,8 +30,12 @@ header {
   display: flex;
   gap: 10px;
 }
-.header-icon {
+.header-icon,
+.setting-icon {
   font-size: 1.8rem;
+}
+.setting-icon {
+  cursor: pointer;
 }
 .time-setting-container {
   position: fixed;
@@ -60,7 +64,7 @@ header {
 .shadow-pop-up {
   position: fixed;
   inset: 0;
-  background: rgba(32, 32, 32, 0.685);
+  background: rgba(32, 32, 32, 0.74);
   z-index: 3;
 }
 .close-setting-icon {
@@ -69,6 +73,7 @@ header {
   font-size: 1.6rem;
   top: 32px;
   right: 32px;
+  cursor: pointer;
 }
 .title-time-setting {
   color: black;
@@ -84,7 +89,7 @@ header {
   color: rgb(63, 63, 63);
   margin-bottom: 5px;
 }
-.time-setting-container form input {
+.time-setting-container form > input {
   margin-bottom: 30px;
   width: 100%;
   padding: 1rem;
@@ -97,6 +102,29 @@ header {
 .time-setting-container form input:focus {
   outline: 2px solid #5c5c5c;
 }
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+.input-permission {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.input-permission input {
+  width: 34px;
+  height: 34px;
+  border: none;
+  cursor: pointer;
+}
 .time-setting-container .submit-time-setting {
   padding: 1rem;
   background: #313131;
@@ -106,6 +134,8 @@ header {
   border: 1px solid #000000;
   border-radius: 4px;
   letter-spacing: 0.5px;
+  margin-top: 10px;
+  cursor: pointer;
 }
 .time-setting-container .submit-time-setting:focus,
 .time-setting-container .submit-time-setting:active {
@@ -117,6 +147,7 @@ header {
   font-weight: 500;
   text-align: center;
   margin-top: 20px;
+  cursor: pointer;
 }
 
 main {
@@ -142,6 +173,7 @@ main {
   grid-template-columns: repeat(3, 1fr);
   width: 90%;
   margin: 20px auto;
+  cursor: pointer;
 }
 .timer-label h2 {
   font-size: 1rem;
@@ -180,6 +212,7 @@ main {
   text-transform: uppercase;
   position: relative;
   transition: color 0.5s linear;
+  cursor: pointer;
 }
 .timer-start:focus {
   outline: 2px solid rgb(75, 75, 75);
@@ -197,6 +230,7 @@ main {
   transform: translateY(-50%);
   opacity: 0;
   transition: all 0.3s;
+  cursor: pointer;
 }
 .skip-timer-button.active {
   opacity: 1;
@@ -233,6 +267,7 @@ main {
   position: absolute;
   right: 10px;
   color: white;
+  cursor: pointer;
 }
 .task-container .task-menu-container {
   position: absolute;
@@ -242,7 +277,6 @@ main {
   right: 0;
   top: 50px;
   z-index: 1;
-  padding: 0.3rem;
   border-radius: 6px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 18px 24px;
   visibility: hidden;
@@ -260,6 +294,10 @@ main {
   padding: 0.85rem;
   margin: 0 auto;
   width: 90%;
+  cursor: pointer;
+}
+.task-menu-container h4:hover {
+  background: #f3f3f3;
 }
 .task-menu-container h4:not(:last-child) {
   border-bottom: 1px solid rgb(182, 182, 182);
@@ -298,6 +336,7 @@ main {
   display: flex;
   justify-content: center;
   gap: 6px;
+  cursor: pointer;
 }
 .task-container .submit-task:focus {
   outline: 2px solid rgb(255, 255, 255);
@@ -329,6 +368,7 @@ main {
   left: 15px;
   font-size: 1.6rem;
   color: #b6b6b6;
+  cursor: pointer;
 }
 .check-task.checked {
   color: black;
@@ -340,4 +380,5 @@ main {
   font-size: 1.6rem;
   font-weight: 600;
   padding: 0.1rem;
+  cursor: pointer;
 }

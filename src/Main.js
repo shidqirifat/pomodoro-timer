@@ -13,28 +13,25 @@ export default function Main(props) {
   const [minute, setMinute] = useState(1);
   const [currentSecond, setCurrentSecond] = useState(0);
   const [currentMinute, setCurrentMinute] = useState(0);
-  const [lapPomodoro, setLapPomodoro] = useState(JSON.parse(localStorage.getItem('Pomodoro')) || 1);
+  const [lapPomodoro, setLapPomodoro] = useState(localStorage.getItem('Pomodoro') || 1);
 
   useEffect(() => {
     setModeStart();
     let startCountTimer;
 
     if (startTimer) {
+      const minutes = currentMinute < 10 ? `0${currentMinute}` : currentMinute;
+      const seconds = currentSecond < 10 ? `0${currentSecond}` : currentSecond;
+      const messages = mode === 0 ? 'Time To Focus!' : 'Time To Break';
+      document.title = `${minutes}:${seconds} ${messages}`;
+
       startCountTimer = setInterval(() => {
         if ((currentSecond === 0 && currentMinute === 0)) {
-          setStartTimer(false);
-          setBeforeStart(false);
-
-          const notifTimeout = new Notification('Pomodoro time is pass?', {
-            body: 'Have a good day',
-          });
-          setRunningTimer(false);
-          localStorage.setItem('runningTimer', JSON.stringify(false));
-          setTimeout(() => notifTimeout.close(), 10000);
+          localStorage.setItem('runningTimer', false);
           finishMode();
         }
         else if (currentSecond === 0 && currentMinute > 0) {
-          setCurrentSecond(59);
+          setCurrentSecond(5);
           setCurrentMinute(currentMinute - 1);
         }
         else if (currentSecond > 0) {
@@ -45,11 +42,40 @@ export default function Main(props) {
 
     return () => clearInterval(startCountTimer);
 
-  }, [second, minute, currentSecond, currentMinute, startTimer, mode, beforeStart, lapPomodoro, props.resfreshTimer, runningTimer]);
+  }, [
+    second,
+    minute,
+    currentSecond,
+    currentMinute,
+    startTimer,
+    mode,
+    beforeStart,
+    lapPomodoro,
+    runningTimer,
+    props.resfreshTimer,
+    props.allowNotif
+  ]);
 
   window.onload = () => {
-    localStorage.setItem('runningTimer', JSON.stringify(false));
+    localStorage.setItem('runningTimer', false);
     resetLapChangeDay();
+  }
+
+  function timersOverNotification() {
+    if (Notification.permission === 'granted') {
+      navigator.serviceWorker.getRegistration().then(function (reg) {
+        let options = { body: 'Take a break for a minute' };
+        if (props.allowNotif.display) {
+          if (!props.allowNotif.audio) {
+            options = {
+              body: 'Take a break for a minute',
+              silent: true
+            };
+          }
+          reg.showNotification('Timer is Over!', options);
+        }
+      });
+    }
   }
 
   function resetLapChangeDay() {
@@ -87,21 +113,38 @@ export default function Main(props) {
     if (!beforeStart) {
       setBeforeStart(true);
     }
+
+    if (props.allowNotif.audio) {
+      const audio = document.getElementById('timer-start');
+      audio.play();
+    }
   }
 
   function finishMode() {
+    setStartTimer(false);
+    setBeforeStart(false);
+    setRunningTimer(false);
+    timersOverNotification();
+
+    if (props.allowNotif.audio) {
+      const audio = document.getElementById('timer-over');
+      audio.play();
+    }
+
     switch (mode) {
       case 0:
         setLapPomodoro(lapPomodoro + 1);
         localStorage.setItem('Pomodoro', lapPomodoro + 1);
-        setMode(1);
+        activeMode(1);
         break;
       case 1:
-        setMode(0);
+        activeMode(0);
         break;
       default:
-        setMode(0);
+        activeMode(0);
     }
+
+    document.title = 'Pomodoro Timer';
   }
 
   function setModeStart() {
@@ -133,7 +176,7 @@ export default function Main(props) {
     if (runningTimer) switchMode = confirm('are u sure want to switch mode?');
     if (switchMode === false) return;
 
-    if (runningTimer && mode === 0) finishMode();
+    if (runningTimer) finishMode();
 
     setBeforeStart(false);
     setStartTimer(false);
@@ -142,6 +185,17 @@ export default function Main(props) {
     if (!skipButton) activeMode(index);
     else activeMode(index === 0 ? 1 : 0);
   }
+
+  const audioTimer = (
+    <>
+      <audio id="timer-start">
+        <source src="./audio/tick.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="timer-over">
+        <source src="./audio/ring-timer.mp3" type="audio/mpeg" />
+      </audio>
+    </>
+  );
 
   const timerLabel = ['Pomodoro', 'Short Break', 'Long Break'];
   const labelContent = timerLabel.map((label, index) => (
@@ -175,6 +229,7 @@ export default function Main(props) {
         <div className='timer-label'>
           {labelContent}
         </div>
+        {audioTimer}
         <div className='timer-counter'>
           <span>
             {currentMinute < 10 ? `0${currentMinute}` : currentMinute}

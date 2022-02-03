@@ -4,7 +4,7 @@ import { faTimes, faClock, faPlusCircle, faCheckCircle, faEllipsisV } from "@for
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Task(props) {
-  const getLap = JSON.parse(localStorage.getItem('Pomodoro'));
+  const getLap = localStorage.getItem('Pomodoro');
   const getTask = JSON.parse(localStorage.getItem('Task'));
   const [newTask, setNewTask] = useState({
     id: null,

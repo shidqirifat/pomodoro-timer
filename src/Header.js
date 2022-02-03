@@ -14,14 +14,18 @@ export default function Header() {
   const [resfreshTimer, setResfreshTimer] = useState(false);
   const [displayTimer, setDisplayTimer] = useState(false);
   const [backgroundMode, setBackgroundMode] = useState('pomodoro');
+  const [allowNotif, setAllowNotif] = useState({
+    display: true,
+    audio: true
+  });
 
   useEffect(() => {
-    const getBackgroundMode = JSON.parse(localStorage.getItem('backgroundMode'));
+    const getBackgroundMode = localStorage.getItem('backgroundMode');
     if (!getBackgroundMode || getBackgroundMode !== backgroundMode) {
-      localStorage.setItem('backgroundMode', JSON.stringify(backgroundMode));
+      localStorage.setItem('backgroundMode', backgroundMode);
     }
 
-    if (!localStorage.getItem('time')) {
+    if (!localStorage.getItem('time') || !localStorage.getItem('notif-permission')) {
       updateToLocalStorage();
       setDisplayTimer(true);
     }
@@ -50,17 +54,30 @@ export default function Header() {
     ))
   }
 
+  function handleChangeNotif(e) {
+    const { name, checked } = e.target;
+    setAllowNotif(prevAllow => (
+      {
+        ...prevAllow,
+        [name]: checked
+      }
+    ))
+  }
+
   function updateToLocalStorage() {
     localStorage.setItem('time', JSON.stringify(timeSet));
+    localStorage.setItem('notif-permission', JSON.stringify(allowNotif));
   }
 
   function updateFromLocalStorage() {
     const previousTime = JSON.parse(localStorage.getItem('time'));
+    const previousPermission = JSON.parse(localStorage.getItem('notif-permission'));
     setTimeSet(previousTime);
+    setAllowNotif(previousPermission);
   }
 
   function isTimerRunning() {
-    const runningTimer = JSON.parse(localStorage.getItem('runningTimer'));
+    const runningTimer = localStorage.getItem('runningTimer');
     if (runningTimer) {
       alert('Timer is running now, You are can not change timer setting before the timer is finish.');
       updateFromLocalStorage();
@@ -86,6 +103,10 @@ export default function Header() {
       shortBreak: 5,
       longBreak: 15
     });
+    setAllowNotif({
+      display: true,
+      audio: true
+    })
     setResetSetting(true);
     setResfreshTimer(true);
     setDisplaySetting(isDisplay => !isDisplay);
@@ -99,13 +120,23 @@ export default function Header() {
         <h2 className='title-time-setting'>Set Up Time</h2>
         <form onSubmit={handleSaveTime}>
           <label htmlFor='pomodoro'>Pomodoro</label>
-          <input type='number' id='pomodoro' name='pomodoro' value={timeSet.pomodoro === 0 ? '' : timeSet.pomodoro} onChange={handleChangeTime} />
+          <input type='number' id='pomodoro' name='pomodoro' value={timeSet.pomodoro === 0 ? '' : timeSet.pomodoro} onChange={handleChangeTime} required />
 
           <label htmlFor='shortBreak'>Short Break</label>
-          <input type='number' id='shortBreak' name='shortBreak' value={timeSet.shortBreak === 0 ? '' : timeSet.shortBreak} onChange={handleChangeTime} />
+          <input type='number' id='shortBreak' name='shortBreak' value={timeSet.shortBreak === 0 ? '' : timeSet.shortBreak} onChange={handleChangeTime} required />
 
           <label htmlFor='longBreak'>Long Break</label>
-          <input type='number' id='longBreak' name='longBreak' value={timeSet.longBreak === 0 ? '' : timeSet.longBreak} onChange={handleChangeTime} />
+          <input type='number' id='longBreak' name='longBreak' value={timeSet.longBreak === 0 ? '' : timeSet.longBreak} onChange={handleChangeTime} required />
+
+          <div className='input-permission'>
+            <label htmlFor='display'>Allow Display Notification</label>
+            <input type='checkbox' id='display' name='display' checked={allowNotif.display} onChange={handleChangeNotif} />
+          </div>
+
+          <div className='input-permission'>
+            <label htmlFor='audio'>Allow Audio Notification</label>
+            <input type='checkbox' id='audio' name='audio' checked={allowNotif.audio} onChange={handleChangeNotif} />
+          </div>
 
           <button className='submit-time-setting'>Save Setting</button>
         </form>
@@ -129,7 +160,7 @@ export default function Header() {
           <FontAwesomeIcon className='header-icon' icon={faLeaf} />
           Pomodoro
         </h1>
-        <FontAwesomeIcon onClick={handleDisplaySetting} className='header-icon' icon={faHourglassStart} />
+        <FontAwesomeIcon onClick={handleDisplaySetting} className='setting-icon' icon={faHourglassStart} />
         {displaySetting && TimeSettingInput}
       </header>
       {displayTimer &&
@@ -138,6 +169,7 @@ export default function Header() {
           setResfreshTimer={setResfreshTimer}
           backgroundMode={backgroundMode}
           setBackgroundMode={setBackgroundMode}
+          allowNotif={allowNotif}
         />}
     </>
   );
