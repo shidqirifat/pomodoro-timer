@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { faHourglassStart, faLeaf, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faHourglassStart, faStopwatch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Main from './Main';
 
@@ -9,7 +9,6 @@ export default function Header() {
     shortBreak: 5,
     longBreak: 15
   });
-  const [displaySetting, setDisplaySetting] = useState(false);
   const [resetSetting, setResetSetting] = useState(false);
   const [resfreshTimer, setResfreshTimer] = useState(false);
   const [displayTimer, setDisplayTimer] = useState(false);
@@ -41,7 +40,11 @@ export default function Header() {
   }, [resetSetting, resfreshTimer, backgroundMode]);
 
   function handleDisplaySetting() {
-    setDisplaySetting(isDisplay => !isDisplay);
+    const popUp = document.querySelector('.shadow-pop-up');
+    const setting = document.querySelector('.time-setting-container');
+
+    popUp.classList.toggle('active');
+    setting.classList.toggle('active');
   }
 
   function handleChangeTime(e) {
@@ -93,7 +96,7 @@ export default function Header() {
 
     updateToLocalStorage();
     setResfreshTimer(true);
-    setDisplaySetting(isDisplay => !isDisplay);
+    handleDisplaySetting();
   }
 
   function handleFactoryReset() {
@@ -109,7 +112,7 @@ export default function Header() {
     })
     setResetSetting(true);
     setResfreshTimer(true);
-    setDisplaySetting(isDisplay => !isDisplay);
+    handleDisplaySetting();
   }
 
   const TimeSettingInput = (
@@ -128,8 +131,8 @@ export default function Header() {
           <label htmlFor='longBreak'>Long Break</label>
           <input type='number' id='longBreak' name='longBreak' value={timeSet.longBreak === 0 ? '' : timeSet.longBreak} onChange={handleChangeTime} required />
 
-          <div className='input-permission'>
-            <label htmlFor='display'>Allow Display Notification</label>
+          <div className='input-permission' id='display-notif'>
+            <label htmlFor='display'>Allow Display Notification*</label>
             <input type='checkbox' id='display' name='display' checked={allowNotif.display} onChange={handleChangeNotif} />
           </div>
 
@@ -137,6 +140,8 @@ export default function Header() {
             <label htmlFor='audio'>Allow Audio Notification</label>
             <input type='checkbox' id='audio' name='audio' checked={allowNotif.audio} onChange={handleChangeNotif} />
           </div>
+
+          <h5>*Required permission of notification to be granted</h5>
 
           <button className='submit-time-setting'>Save Setting</button>
         </form>
@@ -157,11 +162,11 @@ export default function Header() {
     <>
       <header style={styles}>
         <h1 className='header-title'>
-          <FontAwesomeIcon className='header-icon' icon={faLeaf} />
+          <FontAwesomeIcon className='header-icon' icon={faStopwatch} />
           Pomodoro
         </h1>
         <FontAwesomeIcon onClick={handleDisplaySetting} className='setting-icon' icon={faHourglassStart} />
-        {displaySetting && TimeSettingInput}
+        {TimeSettingInput}
       </header>
       {displayTimer &&
         <Main

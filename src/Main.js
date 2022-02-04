@@ -13,7 +13,7 @@ export default function Main(props) {
   const [minute, setMinute] = useState(1);
   const [currentSecond, setCurrentSecond] = useState(0);
   const [currentMinute, setCurrentMinute] = useState(0);
-  const [lapPomodoro, setLapPomodoro] = useState(localStorage.getItem('Pomodoro') || 0);
+  const [lapPomodoro, setLapPomodoro] = useState(Number(localStorage.getItem('Pomodoro')) || 1);
 
   useEffect(() => {
     setModeStart();
@@ -57,7 +57,7 @@ export default function Main(props) {
   ]);
 
   useEffect(() => {
-    localStorage.setItem('Pomodoro', lapPomodoro + 1);
+    localStorage.setItem('Pomodoro', lapPomodoro);
   }, [lapPomodoro]);
 
   window.onload = () => {
@@ -68,14 +68,11 @@ export default function Main(props) {
   function timersOverNotification() {
     if (Notification.permission === 'granted') {
       navigator.serviceWorker.getRegistration().then(function (reg) {
-        let options = { body: 'Take a break for a minute' };
         if (props.allowNotif.display) {
-          if (!props.allowNotif.audio) {
-            options = {
-              body: 'Take a break for a minute',
-              silent: true
-            };
-          }
+          const options = {
+            body: 'Take a break for a minute',
+            silent: true
+          };
           reg.showNotification('Timer is Over!', options);
         }
       });

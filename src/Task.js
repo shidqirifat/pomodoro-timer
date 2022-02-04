@@ -70,11 +70,15 @@ export default function Task(props) {
   }
 
   function clearAllTasks() {
-    const confirmation = confirm('Are You sure want to delete all tasks list');
+    if (tasks.length > 0) {
+      const confirmation = confirm('Are You sure want to delete all tasks list');
+      if (!confirmation) {
+        displayTaskMenu();
+        return;
+      }
+      setTasks([]);
+    }
 
-    if (!confirmation) return;
-
-    setTasks([]);
     displayTaskMenu();
   }
 
@@ -120,7 +124,7 @@ export default function Task(props) {
       <h3
         className='task-title'
       >
-        Todo
+        Task
         <FontAwesomeIcon
           className='task-menu-icon'
           onClick={displayTaskMenu}

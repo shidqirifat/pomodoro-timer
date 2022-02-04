@@ -3,35 +3,51 @@ const urlsToCache = ['/'];
 
 const self = this;
 
-// Install SW
-self.addEventListener('install', function (event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
-      return cache.addAll(urlsToCache);
-    })
-  );
+self.addEventListener("install", function (event) {
+  event.waitUntil(preLoad());
 });
 
-// Listen for requests
-self.addEventListener('fetch', function (event) {
-  event.respondWith(
-    fetch(event.request).catch(function (response) {
-      return response;
-    })
-  );
+const preLoad = async function () {
+  return caches.open(CACHE_NAME).then(function (cache) {
+    return cache.addAll(urlsToCache);
+  });
+};
+
+self.addEventListener("fetch", function (event) {
+  event.respondWith(checkResponse(event.request).catch(function () {
+    return returnFromCache(event.request);
+  }));
+  event.waitUntil(addToCache(event.request));
 });
 
-// Activate the SW
-self.addEventListener('activate', function (event) {
-  event.waitUntil(
-    caches.keys().then(function (cacheName) {
-      return Promise.all(
-        cacheName.filter(function (cacheName) {
-          return cacheName !== CACHE_NAME;
-        }).map(function (cacheName) {
-          return caches.delete(cacheName);
-        })
-      );
-    })
-  );
-});
+const checkResponse = function (request) {
+  return new Promise(function (fulfill, reject) {
+    fetch(request).then(function (response) {
+      if (response.status !== 404) {
+        fulfill(response);
+      } else {
+        reject();
+      }
+    }, reject);
+  });
+};
+
+const addToCache = async function (request) {
+  return caches.open(CACHE_NAME).then(function (cache) {
+    return fetch(request).then(function (response) {
+      return cache.put(request, response);
+    });
+  });
+};
+
+const returnFromCache = async function (request) {
+  return caches.open(CACHE_NAME).then(function (cache) {
+    return cache.match(request).then(function (matching) {
+      if (!matching || matching.status === 404) {
+        return cache.match("offline.html");
+      } else {
+        return matching;
+      }
+    });
+  });
+};
