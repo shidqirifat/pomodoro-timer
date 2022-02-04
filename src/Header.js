@@ -78,7 +78,7 @@ export default function Header() {
 
   function isTimerRunning() {
     const runningTimer = localStorage.getItem('runningTimer');
-    if (runningTimer) {
+    if (runningTimer === 'true') {
       alert('Timer is running now, You are can not change timer setting before the timer is finish.');
       updateFromLocalStorage();
 
@@ -97,7 +97,7 @@ export default function Header() {
   }
 
   function handleFactoryReset() {
-    isTimerRunning();
+    if (isTimerRunning()) return;
     setTimeSet({
       pomodoro: 25,
       shortBreak: 5,

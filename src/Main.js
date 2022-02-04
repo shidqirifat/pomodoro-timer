@@ -13,7 +13,7 @@ export default function Main(props) {
   const [minute, setMinute] = useState(1);
   const [currentSecond, setCurrentSecond] = useState(0);
   const [currentMinute, setCurrentMinute] = useState(0);
-  const [lapPomodoro, setLapPomodoro] = useState(localStorage.getItem('Pomodoro') || 1);
+  const [lapPomodoro, setLapPomodoro] = useState(localStorage.getItem('Pomodoro') || 0);
 
   useEffect(() => {
     setModeStart();
@@ -31,7 +31,7 @@ export default function Main(props) {
           finishMode();
         }
         else if (currentSecond === 0 && currentMinute > 0) {
-          setCurrentSecond(5);
+          setCurrentSecond(59);
           setCurrentMinute(currentMinute - 1);
         }
         else if (currentSecond > 0) {
@@ -55,6 +55,10 @@ export default function Main(props) {
     props.resfreshTimer,
     props.allowNotif
   ]);
+
+  useEffect(() => {
+    localStorage.setItem('Pomodoro', lapPomodoro + 1);
+  }, [lapPomodoro]);
 
   window.onload = () => {
     localStorage.setItem('runningTimer', false);
@@ -134,7 +138,7 @@ export default function Main(props) {
     switch (mode) {
       case 0:
         setLapPomodoro(lapPomodoro + 1);
-        localStorage.setItem('Pomodoro', lapPomodoro + 1);
+        // localStorage.setItem('Pomodoro', lapPomodoro + 1);
         activeMode(1);
         break;
       case 1:

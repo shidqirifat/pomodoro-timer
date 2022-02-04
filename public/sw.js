@@ -1,44 +1,37 @@
-const CACHE_NAME = "version-1";
-const urlsToCache = ['index.html'];
+const CACHE_NAME = "pomodoro-V1";
+const urlsToCache = ['/'];
 
 const self = this;
 
 // Install SW
-self.addEventListener('install', (event) => {
+self.addEventListener('install', function (event) {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        console.log('Opened cache');
-
-        return cache.addAll(urlsToCache);
-      })
-  )
+    caches.open(CACHE_NAME).then(function (cache) {
+      return cache.addAll(urlsToCache);
+    })
+  );
 });
 
 // Listen for requests
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', function (event) {
   event.respondWith(
-    caches.match(event.request)
-      .then(() => {
-        return fetch(event.request)
-          .catch(() => caches.match('offline.html'))
-      })
-  )
+    fetch(event.request).catch(function (response) {
+      return response;
+    })
+  );
 });
 
 // Activate the SW
-self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [];
-  cacheWhitelist.push(CACHE_NAME);
-
+self.addEventListener('activate', function (event) {
   event.waitUntil(
-    caches.keys().then((cacheNames) => Promise.all(
-      cacheNames.map((cacheName) => {
-        if (!cacheWhitelist.includes(cacheName)) {
+    caches.keys().then(function (cacheName) {
+      return Promise.all(
+        cacheName.filter(function (cacheName) {
+          return cacheName !== CACHE_NAME;
+        }).map(function (cacheName) {
           return caches.delete(cacheName);
-        }
-      })
-    ))
-
-  )
+        })
+      );
+    })
+  );
 });
