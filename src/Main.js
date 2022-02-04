@@ -135,7 +135,6 @@ export default function Main(props) {
     switch (mode) {
       case 0:
         setLapPomodoro(lapPomodoro + 1);
-        // localStorage.setItem('Pomodoro', lapPomodoro + 1);
         activeMode(1);
         break;
       case 1:

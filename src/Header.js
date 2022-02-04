@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { faHourglassStart, faStopwatch, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faHourglassStart, faStopwatch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Main from './Main';
 
@@ -97,6 +97,7 @@ export default function Header() {
     updateToLocalStorage();
     setResfreshTimer(true);
     handleDisplaySetting();
+    displayFeedback();
   }
 
   function handleFactoryReset() {
@@ -113,7 +114,31 @@ export default function Header() {
     setResetSetting(true);
     setResfreshTimer(true);
     handleDisplaySetting();
+    displayFeedback(true);
   }
+
+  function displayFeedback(reset = false) {
+    if (reset) {
+      const message = document.querySelector('.feedback-setting > h3');
+      message.innerHTML = 'Successfully Reset Setting';
+    }
+
+    const feedback = document.querySelector('.feedback-setting');
+    feedback.classList.toggle('active');
+    setTimeout(() => {
+      feedback.classList.toggle('active');
+    }, 2000);
+  }
+
+  const feedbackSaveSetting = (
+    <div className='feedback-setting'>
+      <FontAwesomeIcon
+        className='feedback-check'
+        icon={faCheck}
+      />
+      <h3>Successfully Save New Setting</h3>
+    </div>
+  );
 
   const TimeSettingInput = (
     <>
@@ -168,6 +193,7 @@ export default function Header() {
         <FontAwesomeIcon onClick={handleDisplaySetting} className='setting-icon' icon={faHourglassStart} />
         {TimeSettingInput}
       </header>
+      {feedbackSaveSetting}
       {displayTimer &&
         <Main
           resfreshTimer={resfreshTimer}

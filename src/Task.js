@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 import React, { useEffect, useState } from 'react';
-import { faTimes, faClock, faPlusCircle, faCheckCircle, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faPlusCircle, faCheckCircle, faEllipsisV, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Task(props) {
@@ -50,6 +50,8 @@ export default function Task(props) {
 
   function deleteTask(id) {
     setTasks(prevTask => prevTask.filter(task => task.id !== id));
+    const task = tasks.filter(task => id === task.id)[0].name;
+    displayFeedback(2, task);
   }
 
   function submitNewTask(e) {
@@ -67,24 +69,74 @@ export default function Task(props) {
   function clearFinishedTasks() {
     setTasks(tasks => tasks.filter(task => !task.value));
     displayTaskMenu();
+
+    const finishTask = tasks.filter(task => task.value);
+    if (finishTask.length > 0) displayFeedback(1);
   }
 
   function clearAllTasks() {
-    if (tasks.length > 0) {
-      const confirmation = confirm('Are You sure want to delete all tasks list');
-      if (!confirmation) {
-        displayTaskMenu();
-        return;
-      }
-      setTasks([]);
+    if (tasks.length === 0) return;
+
+    setTasks([]);
+    displayPopUp();
+    displayFeedback();
+  }
+
+  function displayFeedback(action = 0, task = false) {
+    const message = document.querySelector('.feedback-clear-tasks > h3');
+    if (action > 0) {
+      message.innerHTML =
+        action === 1
+          ? 'Successfully Delete Finished Tasks'
+          : `Successfully Delete ${task}`;
+    } else {
+      message.innerHTML = 'Successfully Delete All Task';
     }
 
-    displayTaskMenu();
+    const feedback = document.querySelector('.feedback-clear-tasks');
+    feedback.classList.add('active');
+    setTimeout(() => {
+      feedback.classList.toggle('active');
+    }, 2000);
   }
 
   function displayTaskMenu() {
     document.querySelector('.task-menu-container').classList.toggle('active');
   }
+
+  function displayPopUp() {
+    const taskMenuContainer = document.querySelector('.task-menu-container');
+    taskMenuContainer.classList.remove('active');
+
+    if (tasks.length === 0) return;
+    const shadow = document.querySelector('.shadow-clear');
+    const popUp = document.querySelector('.pop-up-clear-tasks');
+    shadow.classList.toggle('active');
+    popUp.classList.toggle('active');
+  }
+
+  const popUpClearAllTasks = (
+    <>
+      <div onClick={displayPopUp} className='shadow-clear'></div>
+      <div className='pop-up-clear-tasks'>
+        <h3>Are You sure want to delete all tasks list?</h3>
+        <div className='pop-up-button'>
+          <button onClick={displayPopUp}>No</button>
+          <button onClick={clearAllTasks}>Yes</button>
+        </div>
+      </div>
+    </>
+  );
+
+  const feedbackClearAllTasks = (
+    <div className='feedback-clear-tasks'>
+      <FontAwesomeIcon
+        className='feedback-check'
+        icon={faCheck}
+      />
+      <h3>Successfully Delete All Task</h3>
+    </div>
+  );
 
   const LapPomodoro = (
     <>
@@ -132,8 +184,10 @@ export default function Task(props) {
         />
         <div className='task-menu-container'>
           <h4 onClick={clearFinishedTasks}>Clear finished tasks</h4>
-          <h4 onClick={clearAllTasks}>Clear all tasks</h4>
+          <h4 onClick={displayPopUp}>Clear all tasks</h4>
         </div>
+        {popUpClearAllTasks}
+        {feedbackClearAllTasks}
       </h3>
       <div className='task-todo'>
         {TaskItems}
