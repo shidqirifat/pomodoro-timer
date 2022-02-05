@@ -17,19 +17,24 @@ body {
   font-family: "Inter", sans-serif;
 }
 header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   height: 60px;
   width: 100%;
   background: #4fbdba;
   color: white;
   padding: 0 1rem;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
-    rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
-  transition: background-color 0.5s linear;
   position: fixed;
   z-index: 2;
+  transition: background-color 0.5s linear;
+}
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  border-bottom: 3px solid;
+  transition: border-bottom-color 0.5s linear;
 }
 .header-title {
   font-size: 1.5rem;
@@ -60,22 +65,12 @@ header {
   visibility: hidden;
   opacity: 0;
   transition: all 0.2s;
-  /* animation: time-setting 0.2s; */
 }
 .time-setting-container.active {
   top: 50%;
   visibility: visible;
   opacity: 1;
 }
-/* @keyframes time-setting {
-  from {
-    opacity: 0;
-    top: 60%;
-  }
-  to {
-    opacity: 1;
-  }
-} */
 .shadow-pop-up,
 .shadow-clear {
   position: fixed;
@@ -108,6 +103,7 @@ header {
 .time-setting-container form {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .time-setting-container form label {
   color: rgb(63, 63, 63);
@@ -186,6 +182,10 @@ main {
   padding-top: 90px;
   min-height: 100vh;
   transition: background-color 0.5s linear;
+}
+.main-container {
+  max-width: 620px;
+  margin: 0 auto;
 }
 
 .timer-container {
@@ -342,7 +342,7 @@ main {
   transform: translate(-50%, -50%);
   width: 90%;
   max-width: 360px;
-  padding: 2rem 1.3rem;
+  padding: 2rem;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -369,11 +369,12 @@ main {
   gap: 20px;
 }
 .pop-up-button button {
-  padding: 0.4rem 2.3rem;
+  padding: 0.8rem 2.5rem;
   font-size: 1.1rem;
   background: white;
   border: 1px solid black;
   border-radius: 6px;
+  cursor: pointer;
 }
 .pop-up-button button:nth-child(1) {
   background-color: #3b3b3b;
@@ -386,6 +387,7 @@ main {
   left: 50%;
   width: 90%;
   max-width: 360px;
+  z-index: 4;
   display: flex;
   gap: 10px;
   justify-content: center;
@@ -394,7 +396,7 @@ main {
   background-color: #ffffff;
   border-radius: 8px;
   text-align: center;
-  color: black;
+  color: green;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px,
     rgba(0, 0, 0, 0.3) 0px 18px 36px -18px;
   visibility: hidden;
@@ -418,9 +420,10 @@ main {
 .feedback-clear-tasks h3,
 .feedback-setting h3 {
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 .task-container form {
+  position: relative;
   width: 100%;
   margin: 0 auto;
   display: flex;
@@ -444,6 +447,41 @@ main {
 }
 .task-container .new-task:focus {
   outline: 2px solid #3b3b3b;
+}
+.alert-max-input,
+.alert-max-time {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  background-color: white;
+  width: 300px;
+  color: red;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px,
+    rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.2s;
+}
+.alert-max-input.active,
+.alert-max-time.active {
+  top: -30px;
+  visibility: visible;
+  opacity: 1;
+}
+.alert-max-time {
+  top: -40px;
+}
+.alert-max-time.active {
+  top: -50px;
 }
 .task-container .submit-task {
   border: none;

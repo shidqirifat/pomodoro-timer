@@ -69,10 +69,18 @@ export default function Main(props) {
     if (Notification.permission === 'granted') {
       navigator.serviceWorker.getRegistration().then(function (reg) {
         if (props.allowNotif.display) {
-          const options = {
-            body: 'Take a break for a minute',
-            silent: true
-          };
+          let options = {};
+          if (mode === 0) {
+            options = {
+              body: 'Take a break for a minute',
+              silent: true
+            };
+          } else {
+            options = {
+              body: 'Get ready to focus',
+              silent: true
+            };
+          }
           reg.showNotification('Timer is Over!', options);
         }
       });
@@ -225,39 +233,41 @@ export default function Main(props) {
 
   return (
     <main style={stylesMain}>
-      <div className='timer-container'>
-        <div className='timer-label'>
-          {labelContent}
+      <div className='main-container'>
+        <div className='timer-container'>
+          <div className='timer-label'>
+            {labelContent}
+          </div>
+          {audioTimer}
+          <div className='timer-counter'>
+            <span>
+              {currentMinute < 10 ? `0${currentMinute}` : currentMinute}
+              :
+              {currentSecond < 10 ? `0${currentSecond}` : currentSecond}
+            </span>
+          </div>
+          <div className='button-timer'>
+            <button
+              className='timer-start'
+              onClick={newTime}
+              style={stylesStart}
+            >
+              {!startTimer
+                ? runningTimer
+                  ? 'Resume'
+                  : 'Start'
+                : 'Pause'
+              }
+            </button>
+            <FontAwesomeIcon
+              onClick={() => handleSkipTimer(mode, true)}
+              className={runningTimer && !startTimer ? 'skip-timer-button active' : 'skip-timer-button'}
+              icon={faForward}
+            />
+          </div>
         </div>
-        {audioTimer}
-        <div className='timer-counter'>
-          <span>
-            {currentMinute < 10 ? `0${currentMinute}` : currentMinute}
-            :
-            {currentSecond < 10 ? `0${currentSecond}` : currentSecond}
-          </span>
-        </div>
-        <div className='button-timer'>
-          <button
-            className='timer-start'
-            onClick={newTime}
-            style={stylesStart}
-          >
-            {!startTimer
-              ? runningTimer
-                ? 'Resume'
-                : 'Start'
-              : 'Pause'
-            }
-          </button>
-          <FontAwesomeIcon
-            onClick={() => handleSkipTimer(mode, true)}
-            className={runningTimer && !startTimer ? 'skip-timer-button active' : 'skip-timer-button'}
-            icon={faForward}
-          />
-        </div>
+        <Task lap={lapPomodoro} mode={mode} />
       </div>
-      <Task lap={lapPomodoro} mode={mode} />
     </main>
   )
 };

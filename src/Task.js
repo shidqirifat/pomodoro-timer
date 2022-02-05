@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 import React, { useEffect, useState } from 'react';
-import { faTimes, faPlusCircle, faCheckCircle, faEllipsisV, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faTimes, faPlusCircle, faCheckCircle, faEllipsisV, faCheck, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Task(props) {
@@ -23,6 +23,16 @@ export default function Task(props) {
 
   function handleNewTask(e) {
     const { name, value } = e.target;
+    const alert = document.querySelector('.alert-max-input');
+    if (value.length > 25) {
+      alert.classList.add('active');
+      setTimeout(() => {
+        alert.classList.remove('active');
+      }, 2000);
+      return;
+    }
+    else alert.classList.remove('active');
+
     setNewTask(prevTask => ({
       ...prevTask,
       id: new Date().valueOf(),
@@ -203,6 +213,12 @@ export default function Task(props) {
           onChange={handleNewTask}
           autoComplete='new-task'
         />
+        <h4 className='alert-max-input'>
+          <FontAwesomeIcon
+            icon={faExclamationCircle}
+          />
+          Max input is 25 character
+        </h4>
         <button className='submit-task'>
           <FontAwesomeIcon
             icon={faPlusCircle}

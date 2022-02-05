@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { faCheck, faHourglassStart, faStopwatch, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faExclamationCircle, faHourglassStart, faStopwatch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Main from './Main';
 
@@ -49,6 +49,15 @@ export default function Header() {
 
   function handleChangeTime(e) {
     const { name, value } = e.target;
+    const alert = document.querySelector('.alert-max-time');
+    if (value > 60) {
+      alert.classList.add('active');
+      setTimeout(() => {
+        alert.classList.remove('active');
+      }, 2000);
+      return;
+    }
+
     setTimeSet(prevTimeSet => (
       {
         ...prevTimeSet,
@@ -147,6 +156,13 @@ export default function Header() {
         <FontAwesomeIcon onClick={handleDisplaySetting} className='close-setting-icon' icon={faTimes} />
         <h2 className='title-time-setting'>Set Up Time</h2>
         <form onSubmit={handleSaveTime}>
+          <h4 className='alert-max-time'>
+            <FontAwesomeIcon
+              icon={faExclamationCircle}
+            />
+            Max time is 60 minute
+          </h4>
+
           <label htmlFor='pomodoro'>Pomodoro</label>
           <input type='number' id='pomodoro' name='pomodoro' value={timeSet.pomodoro === 0 ? '' : timeSet.pomodoro} onChange={handleChangeTime} required />
 
@@ -175,7 +191,7 @@ export default function Header() {
     </>
   );
 
-  const styles = {
+  const stylesHeader = {
     backgroundColor: backgroundMode === 'pomodoro'
       ? '#FF6363'
       : backgroundMode === 'shortBreak'
@@ -183,15 +199,25 @@ export default function Header() {
         : '#1572A1',
   }
 
+  const stylesContainer = {
+    borderBottomColor: backgroundMode === 'pomodoro'
+      ? '#e04040'
+      : backgroundMode === 'shortBreak'
+        ? '#319b97'
+        : '#136086',
+  }
+
   return (
     <>
-      <header style={styles}>
-        <h1 className='header-title'>
-          <FontAwesomeIcon className='header-icon' icon={faStopwatch} />
-          Pomodoro
-        </h1>
-        <FontAwesomeIcon onClick={handleDisplaySetting} className='setting-icon' icon={faHourglassStart} />
-        {TimeSettingInput}
+      <header style={stylesHeader}>
+        <div className='header-container' style={stylesContainer}>
+          <h1 className='header-title'>
+            <FontAwesomeIcon className='header-icon' icon={faStopwatch} />
+            Pomodoro
+          </h1>
+          <FontAwesomeIcon onClick={handleDisplaySetting} className='setting-icon' icon={faHourglassStart} />
+          {TimeSettingInput}
+        </div>
       </header>
       {feedbackSaveSetting}
       {displayTimer &&
